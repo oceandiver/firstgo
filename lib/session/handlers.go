@@ -12,7 +12,7 @@ import (
 
 // loginEmailTemplate is used in verification emails.
 var loginEmailTemplate = template.Must(template.New("loginEmailTemplate").Parse(`
-  A login request was submitted for this email in the passwordless demo app. Use the link below to verify:
+  A login request was submitted for this email in the demo app. Use the link below to verify:
   {{ .LoginUrl }}`))
 
 // redirectToOrigin redirects the user to their OriginUrl if set.

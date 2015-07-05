@@ -35,7 +35,7 @@ fmt.Println("dbUrl", dbUrl)
 	}
 
 	if os.Getenv("DEBUG") == "true" {
-		dbmap.TraceOn("[gorp]", stdlog.New(os.Stdout, "passwordless:", stdlog.Lmicroseconds))
+		dbmap.TraceOn("[gorp]", stdlog.New(os.Stdout, "authentication:", stdlog.Lmicroseconds))
 	}
 
 	t := dbmap.AddTableWithName(User{}, "users").SetKeys(true, "Id")
