@@ -29,7 +29,7 @@ ADD CONSTRAINT users_email_uniq UNIQUE (email);
 CREATE TABLE events (
   id integer not null,
   "OId" character varying(250) not null,
-  owner integer not null,
+  owner character varying(250) not null,
   location character varying(250),
   date date not null,
   time       time with time zone,
@@ -55,8 +55,23 @@ ALTER TABLE ONLY events ADD CONSTRAINT events_pkey PRIMARY KEY (id);
 ------
 
 CREATE TABLE attendance (
-  event_id integer not null,
-  user_id integer not null,
+  id integer not null,
+  event_id character varying(250) not null,
+  user_id character varying(250) not null,
   attend boolean not null,
   updated_at timestampe with time zone not null
 );
+
+-- Sequences
+CREATE SEQUENCE attend_id_seq
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
+
+
+ALTER SEQUENCE attend_id_seq OWNED BY attendance.id;
+
+ALTER TABLE ONLY attendance ALTER COLUMN id SET DEFAULT nextval('attend_id_seq'::regclass);
+

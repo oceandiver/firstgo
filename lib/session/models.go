@@ -2,6 +2,7 @@ package session
 
 import (
 	"crypto/rand"
+	"github.com/dgrijalva/jwt-go"
 	//"crypto/subtle"
 	"bytes"
 	"encoding/base64"
@@ -17,6 +18,10 @@ const (
 	TtlDuration time.Duration = 20 * time.Minute
 )
 
+const (
+	mySigningKey string = "who1Are1YOU4!"
+)
+
 type User struct {
 	Id        uint64      `db:"id"`
 	Email     string      `db:"email"`
@@ -28,7 +33,7 @@ type User struct {
 
 type Event struct {
 	Id        uint64    `db:"id"`
-	Owner     uint64    `db:"owner"`
+	Owner     string    `db:"owner"`
 	Location  string    `db:"location"`
 	Time      time.Time `db:"time"`
 	CreatedAt time.Time `db:"created_at"`
@@ -37,54 +42,58 @@ type Event struct {
 }
 
 type Attendance struct {
-	EventId   uint64    `db:"event_id"`
-	UserId    uint64    `db:"user_id"`
+	EventId   string    `db:"event_id"`
+	UserId    string    `db:"user_id"`
 	Attend    bool      `db:"attend"`
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
 // RefreshToken refreshes Ttl and Token for the User.
 func (u *User) RefreshToken() error {
-	t := time.Now().UTC().Add(TtlDuration)
-	gobEncoded, err := t.GobEncode()
 
-	if err != nil {
-		fmt.Println(err)
-	}
+	// Create the token
+	token := jwt.New(jwt.SigningMethodHS256)
+	// Set some claims
+	token.Header["kid"] = "mySigningKey"
+	token.Claims["oid"] = u.OId
+	token.Claims["exp"] = time.Now().Add(TtlDuration).Unix()
+	// Sign and get the complete encoded token as a string
+	tokenString, err := token.SignedString(mySigningKey)
+	u.Token = tokenString
 
-	token := make([]byte, TokenLength)
-	if _, err := io.ReadFull(rand.Reader, token); err != nil {
-		return err
-	}
+	return err
 
-	fmt.Println(gobEncoded, token)
-	c := [][]byte{gobEncoded, token}
-
-	u.Token = base64.URLEncoding.EncodeToString(bytes.Join(c, []byte(", ")))
-	u.Ttl = time.Now().UTC().Add(TtlDuration)
-	return nil
 }
 
 // IsValidToken returns a bool indicating that the User's current token hasn't
 // expired and that the provided token is valid.
-func (u *User) IsValidToken(token string) bool {
+func (u *User) IsValidToken(myToken string) bool {
 
-	b, err := base64.URLEncoding.DecodeString(token)
-	if err != nil {
-		fmt.Println(err)
-	}
+	token, err := jwt.Parse(myToken, func(token *jwt.Token) (interface{}, error) {
+		return mySigningKey
+	})
 
-	fmt.Println(b)
-
-	fmt.Println("---------------")
-
-	c := bytes.Split(b, []byte(", "))
-	fmt.Println(c)
-
-	var t time.Time
-	t.GobDecode(c[0])
-
-	if t.Before(time.Now().UTC()) {
+	if token.Valid {
+		fmt.Println("You look nice today")
+		if u.OId == token.Claims["oid"] {
+			return true
+		} else {
+			return false
+		}
+	} else if ve, ok := err.(*jwt.ValidationError); ok {
+		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
+			fmt.Println("That's not even a token")
+			return false
+		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
+			// Token is either expired or not active yet
+			fmt.Println("Timing is everything")
+			return false
+		} else {
+			fmt.Println("Couldn't handle this token:", err)
+			return false
+		}
+	} else {
+		fmt.Println("Couldn't handle this token:", err)
 		return false
 	}
 
