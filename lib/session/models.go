@@ -1,14 +1,10 @@
 package session
 
 import (
-	"crypto/rand"
 	"github.com/dgrijalva/jwt-go"
 	//"crypto/subtle"
-	"bytes"
-	"encoding/base64"
 	"fmt"
 	"github.com/guregu/null"
-	"io"
 	"net/url"
 	"time"
 )
@@ -70,7 +66,7 @@ func (u *User) RefreshToken() error {
 func (u *User) IsValidToken(myToken string) bool {
 
 	token, err := jwt.Parse(myToken, func(token *jwt.Token) (interface{}, error) {
-		return mySigningKey
+		return mySigningKey, nil
 	})
 
 	if token.Valid {
