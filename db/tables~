@@ -1,0 +1,60 @@
+CREATE TABLE users (
+  id integer not null,
+  email character varying(250) not null,
+  token character varying(50) not null,
+  ttl timestamp with time zone not null,
+  originurl character varying(250)
+);
+
+-- Sequences
+CREATE SEQUENCE users_id_seq
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
+
+
+ALTER SEQUENCE users_id_seq OWNED BY users.id;
+
+ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+-- Constraints
+ALTER TABLE ONLY users
+ADD CONSTRAINT users_pkey PRIMARY KEY (id),
+ADD CONSTRAINT users_email_uniq UNIQUE (email);
+
+
+CREATE TABLE events (
+  id integer not null,
+  owner integer not null,
+  location character varying(250),
+  date date not null,
+  time       time with time zone,
+  created_at timestamp with time zone not null,
+  updated_at timestamp with time zone not null
+);
+
+-- Sequences
+CREATE SEQUENCE events_id_seq
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
+
+ALTER SEQUENCE events_id_seq OWNED BY events.id;
+
+ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::regclass);
+
+-- Constraints
+ALTER TABLE ONLY events ADD CONSTRAINT events_pkey PRIMARY KEY (id);
+
+------
+
+CREATE TABLE attendance (
+  event_id integer not null,
+  user_id integer not null,
+  attend boolean not null,
+  updated_at timestampe with time zone not null
+);
