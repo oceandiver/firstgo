@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+        "flag"
 )
 
 var templates *template.Template
@@ -37,11 +38,14 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, d map[s
 
 func init() {
 	// load all templates
-	root, _ := os.Getwd()
-
+	cdir, _ := os.Getwd()
+        root := flag.String("rootdir", cdir, "root directory") 
+        flag.Parse()
+        log.Info(*root, "...", cdir)        
 	tmplNames := []string{}
 
-	err := filepath.Walk(path.Join(root, "lib", "templates"), func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(path.Join(*root, "lib", "templates"), func(path string, info os.FileInfo, err error) error {
+                log.Info(path)
 		if strings.HasSuffix(path, ".html") {
 			tmplNames = append(tmplNames, path)
 		}
@@ -54,8 +58,9 @@ func init() {
 		}).Fatal("Template load error.")
 	}
 
-	templates = template.New("")
+	templates = template.New("")        
 	if _, err := templates.ParseFiles(tmplNames...); err != nil {
+                log.Info(tmplNames)
 		log.WithFields(log.Fields{
 			"error": err,
 		}).Fatal("Template parsing error.")

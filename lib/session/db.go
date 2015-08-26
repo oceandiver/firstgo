@@ -8,10 +8,10 @@ import (
 	stdlog "log"
 	"os"
         "fmt"
-        "time"
 )
 
 var dbmap *gorp.DbMap
+var mydb *sql.DB
 
 func init() {
 	dbUrl := os.Getenv("DATABASE_URL")
@@ -40,50 +40,12 @@ fmt.Println("dbUrl", dbUrl)
 
 	t := dbmap.AddTableWithName(User{}, "users").SetKeys(true, "Id")
         log.Info(t)
-
-    var lastInsertId int
-    err = db.QueryRow("INSERT INTO userinfo(username,departname,created) VALUES($1,$2,$3) returning uid;", "astaxie", "研发部门", "2012-12-09").Scan(&lastInsertId)
-    checkErr(err)
-    fmt.Println("last inserted id =", lastInsertId)
-
-    fmt.Println("# Updating")
-    stmt, err := db.Prepare("update userinfo set username=$1 where uid=$2")
-    checkErr(err)
-
-    res, err := stmt.Exec("astaxieupdate", lastInsertId)
-    checkErr(err)
-
-    affect, err := res.RowsAffected()
-    checkErr(err)
-
-    fmt.Println(affect, "rows changed")
-
-    fmt.Println("# Querying")
-    rows, err := db.Query("SELECT * FROM userinfo")
-    checkErr(err)
-
-    for rows.Next() {
-        var uid int
-        var username string
-        var department string
-        var created time.Time
-        err = rows.Scan(&uid, &username, &department, &created)
-        checkErr(err)
-        fmt.Println("uid | username | department | created ")
-        fmt.Printf("%3v | %8v | %6v | %6v\n", uid, username, department, created)
-    }
-
-    fmt.Println("# Deleting")
-    stmt, err = db.Prepare("delete from userinfo where uid=$1")
-    checkErr(err)
-
-    res, err = stmt.Exec(lastInsertId)
-    checkErr(err)
-
-    affect, err = res.RowsAffected()
-    checkErr(err)
-
-    fmt.Println(affect, "rows changed")
+	t = dbmap.AddTableWithName(Event{}, "events").SetKeys(true, "Id")
+        log.Info(t)
+	t = dbmap.AddTableWithName(Attendance{}, "attendance")
+        log.Info(t)
+   
+        mydb = db
 
 }
 

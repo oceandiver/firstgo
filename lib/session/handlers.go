@@ -80,7 +80,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 			// Build login url
 			params := url.Values{}
 			params.Add("token", user.Token)
-			params.Add("uid", strconv.FormatInt(user.Id, 10))
+			params.Add("uid", strconv.FormatUint(user.Id, 10))
 
 			loginUrl := url.URL{}
 
@@ -105,14 +105,12 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 			go func() {
 				if err := loginEmailTemplate.Execute(&mailContent, ctx); err == nil {
 
-                                     fmt.Fprintf(w, email)
-/*
+                                     //fmt.Fprintf(w, email)
 					if err := SendMail([]string{email}, "Passwordless Login Verification", mailContent.String()); err != nil {
 						log.WithFields(log.Fields{
 							"error": err,
 						}).Error("Error sending verification email")
 					}
-*/
 				}
 			}()
 		}

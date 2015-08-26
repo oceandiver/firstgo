@@ -13,10 +13,11 @@ func CsrfMiddleware(w http.ResponseWriter, r *http.Request, next http.HandlerFun
 
 	// nosurf disposes of the token as soon as it calls the http.Handler you provide...
 	// in order to use it as negroni middleware, pull out token and dispose of it ourselves
-	csrfHandler := nosurf.NewPure(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
+	csrfHandler := nosurf.New(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
 		token = nosurf.Token(r)
 		passed = true
 	}))
+        csrfHandler.ExemptRegexp("/v1(.*)")
 	csrfHandler.ServeHTTP(w, r)
 
 	// csrf passed

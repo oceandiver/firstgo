@@ -1,0 +1,3 @@
+ #!/bin/sh
+
+DATABASE_URL='user=pguser password=pguser dbname=letsgo sslmode=disable' EMAIL_FROM=momenz.co@gmail.com EMAIL_HOST_USER=momenz.co@gmail.com EMAIL_HOST_PASSWORD=M0b2id1l00 EMAIL_HOST=smtp.gmail.com EMAIL_PORT=587 AUTH_KEY=”12345” ENCRYPT_KEY=”qqqqqqqqqqqqqqqq” DEBUG=true  go run -v server2.go  -rootdir "/home/joe/go/src/github.com/oceandiver/letsgo"

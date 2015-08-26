@@ -12,6 +12,7 @@ import (
 
 func main() {
   fmt.Println("Server started!")
+
   r := mux.NewRouter()
 
   // static files
