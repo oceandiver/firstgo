@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<!--[if IE 9]><html lang="en" class="ie9 desktop-view not-mobile-device "><![endif]-->
+<!--[if (!IE 9) | (!IE)]><!--><html lang="en" class="desktop-view not-mobile-device "><!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <title>[Tutorial] How to create a modal/pop-up in Webflow - Webflow Forums</title>
+    <meta name="description" content="Community for Webflow Users to get Support and Inspiration">
+    <meta name="author" content="">
+<meta name="generator" content="Discourse 1.4.0.beta3 - https://github.com/discourse/discourse version 18f887772df5b25df33e7fb1bcf14d379bb9c624">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link href="/testdrive3.css" media="all" rel="stylesheet" />
+
+<link href="https://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" />
+<script src="testdrive3.js"></script>
+<script src="https://maps.google.com/maps/api/js?v=3.5&amp;sensor=false"></script>
+<script type="text/javascript">
+var geocoder;
+var map;
+function initialize() {
+geocoder = new google.maps.Geocoder();
+var latlng = new google.maps.LatLng(-34.397, 150.644);
+var myOptions = {
+  zoom: 8,
+  center: latlng,
+  mapTypeId: google.maps.MapTypeId.ROADMAP
+}
+map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+}
+
+
+function codeAddress() {
+var address = document.getElementById("address").value;
+geocoder.geocode( { 'address': address}, function(results, status) {
+  if (status == google.maps.GeocoderStatus.OK) {
+    map.setCenter(results[0].geometry.location);
+    var marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+        position: results[0].geometry.location
+
+    });
+    markerCoords(marker);
+  } else {
+    alert("Geocode was not successful for the following reason: " + status);
+  }
+});
+}
+
+function markerCoords(markerobject){
+google.maps.event.addListener(markerobject, 'dragend', function(evt){
+    infoWindow.setOptions({
+        content: '<p>Marker dropped: Current Lat: ' + evt.latLng.lat().toFixed(3) + ' Current Lng: ' + evt.latLng.lng().toFixed(3) + '</p>'
+    });
+    infoWindow.open(map, markerobject);
+});
+google.maps.event.addListener(markerobject, 'drag', function(evt){
+    console.log("marker is being dragged");
+});   
+}
+
+var infoWindow = new google.maps.InfoWindow({
+      content: "xxx"
+  });
+
+</script>
+
+</head>
+
+<body>
+  <div class="w-section main-section">
+    <div class="w-container">
+      <h1 class="main-heading">LET'S GO</h1>
+      <p class="main-subtitle">THIS IS A TEST DRIVE PAGE</p>
+    </div>
+  </div>
+  <div class="w-section section"></div>
+  <div class="w-section section">
+    <div class="w-container container-style">
+      <div class="label try-it">SIGN-Up</div>
+      <div class="w-form">
+        <form id="form-signup" name="email-form-3" data-name="Email Form 3">
+          <label for="name-4">Name:</label>
+          <input class="w-input" id="name-4" type="text" placeholder="Enter your name" name="name" data-name="Name 4">
+          <label for="email-6">Email Address:</label>
+          <input class="w-input" id="email-6" type="email" placeholder="Enter your email address" name="email" data-name="Email 6" required="required">
+          <input id="submit-signup" class="w-button" type="submit" value="Submit" data-wait="Please wait...">
+        </form>
+      </div>
+    </div>
+    <div class="w-container container-style">
+      <div class="w-form">
+        <form id="form-signin" name="email-form-4" data-name="Email Form 4">
+          <label for="email-7">Email Address:</label>
+          <input class="w-input" id="email" type="email" placeholder="Enter your email address" name="Email" data-name="Email 7" required="required">
+          <input id="submit-signin" class="w-button" type="submit" value="Submit" data-wait="Please wait...">
+        </form>
+      </div>
+      <div class="label try-it">SIGN-IN</div>
+    </div>
+    <div class="w-container container-style">
+      <div class="label try-it">Invite</div>
+      <div class="w-form">
+        <form id="form-new-event" name="invite-form" data-name="Email Form 5">
+          <label for="name-5">ID</label>
+          <input class="w-input" type="text" placeholder="Enter your name" name="UserId" data-name="Name 5">
+          <label for="name-5">Token</label>
+          <input class="w-input"type="text" placeholder="Enter your name" name="Token" data-name="Name 5">
+          <label for="name-5">LOCATION</label>
+          <input class="w-input" id="name-5" type="text" placeholder="Enter your name" name="Location" data-name="Name 5">
+          <label for="field">TIME</label>
+          <input class="w-input" id="datetimepicker" type="text" placeholder="Example Text" name="Time" required="required">
+          <label for="email-8">INVITEES</label>
+          <input class="w-input" id="email-8" type="email" placeholder="Enter your email address" name="Invitees" data-name="Email 8" required="required">
+          <input class="w-button" id="submit-new-event" type="submit" value="Submit" data-wait="Please wait...">
+        </form>
+      </div>
+    </div>
+    <div class="w-container container-style">
+     <div class="label try-it">List Users</div>
+      <div class="w-form">
+        <form id="form-list-users" name="list-uers-form" data-name="Email Form 5">
+          <label for="name-5">ID</label>
+          <input class="w-input" type="text" placeholder="Enter your name" name="UserId" data-name="Name 5">
+          <label for="name-5">Token</label>
+          <input class="w-input"type="text" placeholder="Enter your name" name="Token" data-name="Name 5">
+          <input class="w-button" id="submit-list-users" type="submit" value="Submit" data-wait="Please wait...">
+        </form>
+      </div>
+     </div>
+    </div>
+    <div class="w-container container-style">
+      <div class="label try-it">List events</div>
+      <div class="w-form">
+        <form id="form-list-events" name="list-events-form" data-name="Email Form 5">
+          <label for="name-5">ID</label>
+          <input class="w-input" type="text" placeholder="Enter your name" name="UserId" data-name="Name 5">
+          <label for="name-5">Token</label>
+          <input class="w-input"type="text" placeholder="Enter your name" name="Token" data-name="Name 5">
+          <input class="w-button" id="submit-list-events" type="submit" value="Submit" data-wait="Please wait...">
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="w-section modal-background">
+    <div class="modal-window" id="map_canvas">
+    </div><a class="modal-close" href="#">Close</a>
+    </div>
+  </div>
+<script>
+$(document).ready(function() {   
+$('#name-5').focus(function() {     
+$('.modal-background').fadeIn();   
+initialize();
+});   
+$('.modal-close').click(function() {     
+$('.modal-background').fadeOut();   }); });
+</script>
+
+<!-- this should go after your </body> -->
+<link rel="stylesheet" type="text/css" href="jquery.datetimepicker.css"/ >
+<script src="jquery.datetimepicker.js"></script>
+<script>
+jQuery('#datetimepicker').datetimepicker({
+    format:'D, d M Y H:i'
+});
+</script>
+</body>
